@@ -13,8 +13,6 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.tooling.preview.Preview
 import com.arunabhdas.test.ui.MainScreen
 import com.arunabhdas.test.ui.theme.TestTheme
-import com.arunabhdas.test.viewmodel.UserViewModel
-
 class MainActivity : ComponentActivity() {
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -22,7 +20,6 @@ class MainActivity : ComponentActivity() {
         setContent {
             TestTheme {
                 Scaffold(modifier = Modifier.fillMaxSize()) { innerPadding ->
-
                     MainScreen()
                 }
             }

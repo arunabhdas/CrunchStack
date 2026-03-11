@@ -1,3 +1,5 @@
+package com.arunabhdas.test.model
+
 data class UserResponse(
     val userList: List<User>
 )

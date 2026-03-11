@@ -1,13 +1,18 @@
 package com.arunabhdas.test.repository
 
-import User
+import com.arunabhdas.test.model.User
 import com.arunabhdas.test.service.UserApi
 
 class UserRepository(
-    userApi: UserApi
+    private val userApi: UserApi
 ) {
 
-    fun fetchUsers(): List<User> {
-        return emptyList()
+    suspend fun fetchUsers(): List<User> {
+        val response = userApi.getUsers()
+        return if (response.isSuccessful) {
+            response.body() ?: emptyList()
+        } else {
+            emptyList()
+        }
     }
 }

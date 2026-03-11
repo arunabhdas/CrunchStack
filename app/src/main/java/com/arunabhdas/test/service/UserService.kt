@@ -1,6 +1,6 @@
 package com.arunabhdas.test.service
 
-import User
+import com.arunabhdas.test.model.User
 import retrofit2.Response
 import retrofit2.Retrofit
 import retrofit2.converter.gson.GsonConverterFactory
@@ -12,7 +12,7 @@ interface UserApi  {
 }
 
 object RetrofitHelper {
-    val baseUrl = "https://jsonplaceholder.typicode.com"
+    val baseUrl = "https://jsonplaceholder.typicode.com/"
 
     fun getInstance(): Retrofit {
        return Retrofit.Builder().baseUrl(baseUrl)
