@@ -1,0 +1,100 @@
+// ====== EDIT THESE TWO VALUES (or replace this node with a Form/Webhook trigger) ======
+const sourceContent = `The shortest boom in history: why the “AI Era” will end sooner than you think.
+We assume the AI revolution will last decades. But the data suggests we are already sprinting toward the “Saturation Point.” What comes after?
+
+I study Human-Computer Interaction and Cognitive Science. Which means I spend a lot of time thinking about how humans adapt to technology. It also means that, as I now hunt for a researcher role, there is a reasonable chance AI is automating the part where the human does the interacting. Funny how that works.
+
+
+** Photo by Markus Winkler on Unsplash **
+
+But here’s the thing. While everyone keeps insisting AI is the future, I’ve started asking a quieter question: what is AI’s future?
+
+Every technology revolution in history has an expiry date. Not because the tech dies, but because it stops being a revolution and starts being wallpaper. The internet didn’t end. It just got so woven into everything that we stopped noticing it. You don’t “go on the internet” anymore. You just… live there.
+
+AI is heading to the same place. Just much, much faster than anyone is admitting.
+
+Every boom has a clock
+Here’s a fun pattern nobody talks about at tech conferences.
+
+The Mainframe Era (1950s–60s) gave us programming languages and the idea that software could be standardised. Lasted about a decade. The PC Revolution (1970s–80s) put a computer in your home and made the word “personal” mean something new in tech. Another decade, then the internet took over. The dot-com boom of the 90s peaked spectacularly, crashed even more spectacularly (RIP sock puppet dog), and then quietly became the backbone of how money moves on earth. The Mobile and App Store era (2007–2015) reshuffled everything again. Social media, on-demand food, software engineers making more money than doctors. A golden era that lasted, you guessed it, about 10 to 12 years.
+
+Every boom. About a decade. Then the next thing.
+
+AI is moving 2 to 3x faster than any of these.
+
+The speed that should actually scare you
+Go back to early 2023. ChatGPT had just launched. The models were clumsy, kind of charming in a “my toddler just drew a face” sort of way. Impressive, sure. Threatening? Not really. The general vibe was: relax, it’s a newbie.
+
+Then GPT-4 came. Then multi-file code generation. Then full websites from a single prompt. The people who said “AI has limits” in January were eating their words by March. By the time most people finished forming an opinion on AI, the AI they had an opinion about didn’t exist anymore.
+
+Entry-level jobs started quietly disappearing. Panic followed, as it does. Then came the familiar reassurance cycle: humans are irreplaceable, AI has limits, everyone go home. Except the panic wasn’t wrong. It was just early.
+
+Google just told you we’re at the saturation point (they didn’t say it like that, but still)
+Google I/O was a few days ago. The biggest developer event on the planet. And if you watched Sundar Pichai’s keynote, you heard something quietly remarkable buried in the opening: “We’re now in the part of the AI cycle where people want to see the value in the products they use every day.”
+
+Read that again.
+
+Not “we’re unleashing the next revolution.” Not “prepare to have your mind blown.” The framing was: AI is here, it works, now let’s make it useful for ordinary Tuesday afternoons.
+
+The announcements matched the energy. Gemini is now embedded inside Search, Gmail, Docs, Android, shopping carts, smart glasses. There is an AI agent called Gemini Spark that runs in the background of your phone, continuously, like a very attentive assistant who never sleeps and never asks for a raise. Google’s new platform is called Antigravity, built around agents that don’t just answer questions but complete tasks on your behalf.
+
+None of this is “wow, AI exists.” It’s “AI is now furniture.” And Google, whether they meant to or not, just announced the beginning of the end of the AI era as a distinct cultural moment.
+
+We are closer to the end than the beginning
+Here’s the uncomfortable bit.
+
+The speed of AI’s evolution means that by the time the world trains a real generation of AI experts, we’ll already be past the peak. The big, jaw-dropping leaps, the ones that rewired entire industries overnight, are largely done. What’s left is refinement. Very good refinement, but refinement nonetheless.
+
+This is how every boom ends. Not with a bang.
+
+What makes AI uniquely weird is that it doesn’t need humans to keep improving. It uses itself. Models train on other models, on user feedback, on mountains of data, compressing what would normally take years into a few months. The boom is burning so fast because the fuel regenerates itself.
+
+And here’s the plot twist nobody saw coming: the most valuable AI jobs right now aren’t the engineers building the models. They’re the people deciding how AI gets used, who it affects, and what it is not allowed to touch. Governance, privacy, ethics. The least glamorous corner of tech is suddenly the most important one. (So maybe there’s hope for me yet.)
+
+So what actually comes next?
+Think about how you use the internet today.
+
+You don’t think about it. You don’t ‘‘woah’’ at it. It’s just there, like air, like the assumption that the lights will turn on when you flip the switch. That’s where AI is going. The “AI-powered” badge on every product will quietly disappear, not because AI went away, but because labelling it would be like labelling something “electricity-powered.”
+
+Google I/O 2026 was, without meaning to be, a preview of that world. A hundred announcements, all of them about AI, none of them feeling like a rupture. That’s not a criticism. That’s the natural arc of every technology that actually wins.
+
+The next wave isn’t smarter AI. It’s ambient computing and human-centred design, technology that gets out of the way and makes you feel more capable, not more dependent. The generation growing up with AI isn’t impressed by it. They just expect it. What they actually want is technology that feels like it was made for humans, not the other way around.
+
+The AI era won’t end with a crash. It’ll end the way all the best eras end: by becoming so normal that nobody calls it an era anymore.
+
+That moment, by the way, is a lot closer than the hype would have you believe.`;
+const brandVoice = `Professional but warm. Plain English, no jargon, no emojis, no hype words like "revolutionary".`;
+// =====================================================================================
+
+const system = `You are a senior content strategist and copywriter. You repurpose long-form content into platform-native social content. Respond with VALID JSON ONLY (no markdown, no backticks) matching exactly this schema: {
+    "linkedin_post": string,
+    "x_thread": string[],
+    "newsletter": {
+        "subject": string,
+        "body": string
+    },
+    "instagram_caption": string
+}`;
+
+const user = `BRAND VOICE:\n${brandVoice
+}\n\nSOURCE CONTENT:\n${sourceContent
+}\n\nProduce:\n1) linkedin_post: one post (strong first-line hook, then value, then a soft CTA), ~1300 characters.\n2) x_thread: an array of tweets. The first tweet must be a scroll-stopping hook. Each tweet <= 280 characters. 5-8 tweets.\n3) newsletter: a subject line under 60 chars and a short body (~150 words).\n4) instagram_caption: one caption ending with 3-5 relevant hashtags.`;
+
+return [
+    {
+  json: {
+    openaiBody: {
+      model: "gpt-4o-mini",
+      temperature: 0.7,
+      response_format: { type: "json_object"
+                },
+      messages: [
+                    { role: "system", content: system
+                    },
+                    { role: "user", content: user
+                    }
+                ]
+            }
+        }
+    }
+];

@@ -1,0 +1,102 @@
+{
+    "name": "AI Content Repurposer",
+    "active": false,
+    "settings": {
+        "executionOrder": "v1"
+    },
+    "nodes": [
+        {
+            "parameters": {},
+            "id": "a1111111-1111-4111-8111-111111111111",
+            "name": "Manual Trigger",
+            "type": "n8n-nodes-base.manualTrigger",
+            "typeVersion": 1,
+            "position": [
+                240,
+                300
+            ]
+        },
+        {
+            "parameters": {
+                "jsCode": "// ====== EDIT THESE TWO VALUES (or replace this node with a Form/Webhook trigger) ======\nconst sourceContent = `PASTE YOUR LONG-FORM CONTENT HERE — a blog post, article, or YouTube transcript.`;\nconst brandVoice = `Professional but warm. Plain English, no jargon, no emojis, no hype words like \"revolutionary\".`;\n// =====================================================================================\n\nconst system = `You are a senior content strategist and copywriter. You repurpose long-form content into platform-native social content. Respond with VALID JSON ONLY (no markdown, no backticks) matching exactly this schema: {\"linkedin_post\": string, \"x_thread\": string[], \"newsletter\": {\"subject\": string, \"body\": string}, \"instagram_caption\": string}`;\n\nconst user = `BRAND VOICE:\\n${brandVoice}\\n\\nSOURCE CONTENT:\\n${sourceContent}\\n\\nProduce:\\n1) linkedin_post: one post (strong first-line hook, then value, then a soft CTA), ~1300 characters.\\n2) x_thread: an array of tweets. The first tweet must be a scroll-stopping hook. Each tweet <= 280 characters. 5-8 tweets.\\n3) newsletter: a subject line under 60 chars and a short body (~150 words).\\n4) instagram_caption: one caption ending with 3-5 relevant hashtags.`;\n\nreturn [{\n  json: {\n    openaiBody: {\n      model: \"gpt-4o-mini\",\n      temperature: 0.7,\n      response_format: { type: \"json_object\" },\n      messages: [\n        { role: \"system\", content: system },\n        { role: \"user\", content: user }\n      ]\n    }\n  }\n}];"
+            },
+            "id": "b2222222-2222-4222-8222-222222222222",
+            "name": "Prepare Request",
+            "type": "n8n-nodes-base.code",
+            "typeVersion": 2,
+            "position": [
+                460,
+                300
+            ]
+        },
+        {
+            "parameters": {
+                "method": "POST",
+                "url": "https://api.openai.com/v1/chat/completions",
+                "authentication": "genericCredentialType",
+                "genericAuthType": "httpHeaderAuth",
+                "sendBody": true,
+                "specifyBody": "json",
+                "jsonBody": "={{ $json.openaiBody }}",
+                "options": {}
+            },
+            "id": "c3333333-3333-4333-8333-333333333333",
+            "name": "Call LLM",
+            "type": "n8n-nodes-base.httpRequest",
+            "typeVersion": 4.2,
+            "position": [
+                680,
+                300
+            ]
+        },
+        {
+            "parameters": {
+                "jsCode": "const raw = $input.first().json.choices?.[0]?.message?.content;\n\nif (!raw) {\n  return [{ json: { error: 'No content returned from the model', full_response: $input.first().json } }];\n}\n\nlet parsed;\ntry {\n  parsed = JSON.parse(raw);\n} catch (e) {\n  return [{ json: { error: 'Model did not return valid JSON', raw } }];\n}\n\nreturn [{ json: parsed }];"
+            },
+            "id": "d4444444-4444-4444-8444-444444444444",
+            "name": "Format Outputs",
+            "type": "n8n-nodes-base.code",
+            "typeVersion": 2,
+            "position": [
+                900,
+                300
+            ]
+        }
+    ],
+    "connections": {
+        "Manual Trigger": {
+            "main": [
+                [
+                    {
+                        "node": "Prepare Request",
+                        "type": "main",
+                        "index": 0
+                    }
+                ]
+            ]
+        },
+        "Prepare Request": {
+            "main": [
+                [
+                    {
+                        "node": "Call LLM",
+                        "type": "main",
+                        "index": 0
+                    }
+                ]
+            ]
+        },
+        "Call LLM": {
+            "main": [
+                [
+                    {
+                        "node": "Format Outputs",
+                        "type": "main",
+                        "index": 0
+                    }
+                ]
+            ]
+        }
+    },
+    "pinData": {}
+}
